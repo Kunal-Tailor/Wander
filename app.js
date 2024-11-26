@@ -34,6 +34,8 @@ app.use(methodOverride("_method"));
 app.engine("ejs", ejsMate);
 app.use(express.static(path.join(__dirname, "/public")));
 
+mongoose.set('strictPopulate', false);
+
 // Session configuration
 const sessionOptions = {
   secret: "mysupersecretcode",

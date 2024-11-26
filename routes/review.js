@@ -12,18 +12,17 @@ const reviewController=require("../models/reviews.js");
 const { createReview, destroyReview } = require("../controllers/reviews.js");
 
 
-// Review Route
 router.post("/",
   isLoggedIn,
   validateReview,  
   wrapAsync(reviewController.createReview));
 
 
-
-//delete Review Route
-router.delete(
-  "/:reviewId",isLoggedIn,isReviewAuthor,
-  wrapAsync(reviewController.destroyReview)
-);
+//delete review route
+router.delete
+  ("/:reviewId", 
+  isLoggedIn,
+  isReviewAuthor,
+  wrapAsync(reviewController.destroyReview));
 
 module.exports = router;
