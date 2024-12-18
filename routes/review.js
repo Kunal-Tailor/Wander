@@ -1,28 +1,26 @@
 const express = require("express");
-const router = express.Router({mergeParams:true});
+const router = express.Router({ mergeParams: true });
+
 const wrapAsync = require("../utils/wrapAsync.js");
+const { validateReview, isLoggedIn, isReviewAuthor } = require("../middleware.js");
 
-const ExpressError = require("../utils/ExpressError.js");
-
-const Listing = require("../models/listing.js");
-const Review = require("../models/reviews.js"); 
-const {validateReview, isLoggedIn, isReviewAuthor}=require("../middleware.js")
-
-const reviewController=require("../models/reviews.js");
+// Import the controller functions directly
 const { createReview, destroyReview } = require("../controllers/reviews.js");
 
-
-router.post("/",
+// POST route for creating a review
+router.post(
+  "/",
   isLoggedIn,
-  validateReview,  
-  wrapAsync(reviewController.createReview));
+  validateReview,
+  wrapAsync(createReview) // Use the imported createReview function
+);
 
-
-//delete review route
-router.delete
-  ("/:reviewId", 
+// DELETE route for deleting a review
+router.delete(
+  "/:reviewId",
   isLoggedIn,
   isReviewAuthor,
-  wrapAsync(reviewController.destroyReview));
+  wrapAsync(destroyReview) // Use the imported destroyReview function
+);
 
 module.exports = router;
