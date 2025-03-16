@@ -1,4 +1,6 @@
 <% layout("/layouts/boilerplate.ejs")%>
+
+
 <div class="row mt-3">
   <div class="col-8 offset-2">
     <h3><%= listing.title %></h3>
@@ -118,70 +120,38 @@
   </div>
 </div>
 <script>
-  let mapToken = "<%=process.env.MAP_TOKEN%>";
-  ((g) => {
-    var h,
-      a,
-      k,
-      p = "The Google Maps JavaScript API",
-      c = "google",
-      l = "importLibrary",
-      q = "__ib__",
-      m = document,
-      b = window;
-    b = b[c] || (b[c] = {});
-    var d = b.maps || (b.maps = {}),
-      r = new Set(),
-      e = new URLSearchParams(),
-      u = () =>
-        h ||
-        (h = new Promise(async (f, n) => {
-          await (a = m.createElement("script"));
-          e.set("libraries", [...r] + "");
-          for (k in g)
-            e.set(
-              k.replace(/[A-Z]/g, (t) => "_" + t[0].toLowerCase()),
-              g[k]
-            );
-          e.set("callback", c + ".maps." + q);
-          a.src = `https://maps.${c}apis.com/maps/api/js?` + e;
-          d[q] = f;
-          a.onerror = () => (h = n(Error(p + " could not load.")));
-          a.nonce = m.querySelector("script[nonce]")?.nonce || "";
-          m.head.append(a);
-        }));
-    d[l]
-      ? console.warn(p + " only loads once. Ignoring:", g)
-      : (d[l] = (f, ...n) => r.add(f) && u().then(() => d[l](f, ...n)));
-  })({ key: "AIzaSyBCS_ixpuWdO2OXo5SYbFgWUK2gBGqgiEk", v: "weekly" });
-</script>
+  let coordinates="<%- JSON.stringify(listing.geometry.coordinates) %>";
 
-<script>
-  // Initialize and add the map
-  let map;
+  const lng="<%= listing.geometry.coordinates[0] %>";
+  const lat="<%= listing.geometry.coordinates[1] %>"
 
-  async function initMap() {
-    // The location of Uluru
-    const position = { lat: 28.36, lng: 77.12 };
-    // Request needed libraries.
-    //@ts-ignore
-    const { Map } = await google.maps.importLibrary("maps");
-    const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
-
-    // The map, centered at Uluru
-    map = new Map(document.getElementById("map"), {
-      zoom: 4,
-      center: position,
-      mapId: "DEMO_MAP_ID",
-    });
-
-    // The marker, positioned at Uluru
-    const marker = new AdvancedMarkerElement({
-      map: map,
-      position: position,
-      title: "Uluru",
-    });
+  
+  let mapToken = "pk.eyJ1IjoiaXRzc2FyYW5oZXJlIiwiYSI6ImNsd3B3aDFybjFodTMyaXJ6cGQxeWdwYzcifQ.4HPJRlRvgTdHaXXTDQEWCg";
+  
+  if (!mapToken) {
+    console.error("Mapbox token is missing! Check your .env file and server settings.");
   }
 
-  initMap();
+  mapboxgl.accessToken = mapToken;
+  
+  const map = new mapboxgl.Map({
+      container: 'map', // container ID
+      style: "mapbox://styles/mapbox/streets-v12",
+      center: [lng,lat], // starting position [lng, lat]
+      zoom: 9 // starting zoom
+  });
+
+  
+  
+  const marker = new mapboxgl.Marker({color:"red"})
+  .setLngLat({ lng, lat})
+  .setPopup(new mapboxgl.Popup({offset:25})
+  .setHTML(`<h4>YOUR DESTINATION</h4>`))
+  .addTo(map);
+
+
+
+ 
 </script>
+
+
